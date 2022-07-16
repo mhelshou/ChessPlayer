@@ -1,0 +1,62 @@
+Todo Next:
+
+- Speed up all evals
+
+- Port to C
+- null move
+
+- Doubled Pawns
+- When you are way down in material avoid exchanges
+- Should I randomize the nodes before evaluating?
+- Get away with most function calls and inline functions.
+- complete FEN parsing
+- Make all assertd conditionally compiled
+- En Passent
+- Make UCI output more comprehensive and less frequent
+- Not castling has a high cost
+- Support ucinewgame
+
+Speed Improvements:
+
+Immediate Next steps:
+- Structure copy only necessay items instead of byte by byte
+- Time evaluation and see if performance changes when evaluation is ordered or when nodes with wild swings are discarded
+- Make sure superfluous getPiece is removed
+- Speed up the actual checking for legality
+
+1- Change the memory management strategy
+2- Store positions and their evaluation in a node cache, where the LRU is purged if space is needed
+3- Reduce the storage requirements of the nodes possibly by analyzing their requirements or by changing the algorithm to a complete bitboard implementation
+4- Add multiple threads
+5- Order of evaluation. Maybe first examine king checks
+
+- Replace recursion with loops. Easier to understand and debug
+
+Ideas so far:
+- Create a hash for every board analyzed along with the score. However I realized this may not work because if you reach the same board 3 moves later, the analysis will be different because of the extra board. It seems there is no alternative to keeping the nodes that were created and analyzing them at an alternative depth. Since the most expensive operation is the creation of moves not the min-max itself. So, in each iteration I may have to run a new versin of min-max but just rely on previously created nodes
+
+- One possibility for smart hashing is to create two hashes one for storage and the other for cross checking that we have the right board/node. Only when the two hashes match that you perform a byte by byte comparison (since creating the hash happens only at creation but comparison would happen on every lookup)
+
+
+
+Done - Test the initial position is valid (and has two kings) => for example you can't be under check when it's not your turn
+
+Done - Generate Castling moves in the Move generator
+
+- EnPassant
+
+Done - Stalemate
+
+- 3-move repitition
+
+- How to make reaching mates in a shorter time preferrable to mates in a longer time (a score of 100000 will be the same regardless of the depth)
+
+- Queen Safety (early withdrawal)
+
+- Losing the ability to Castle should have a negative score
+
+- Number of pieces developed should have a high score
+
+
+Mobility:
+Mobility should probably be measured not by how many squares you can reach (how many children), but how many squares you can safely land on (not under attack by a lower rank?)
